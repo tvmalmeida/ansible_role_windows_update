@@ -36,6 +36,8 @@
     category_names: "{{ update_category_names }}"
     state: installed
   register: update_result
+  retries: 2
+  delay: 5
 
 # Reboot operational system
 - name: Reboot host after installing updates.
