@@ -1,0 +1,13 @@
+---
+- name: Check if reboot is needed
+  ansible.windows.win_powershell:
+    script: |
+      $RebootPending = Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending"
+      $RebootRequired = $RebootPending `
+      -or (Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired") `
+      -or (Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootPending")
+      $Ansible.Result = $false
+      if ($RebootRequired) {
+          $Ansible.Result = $true
+      }
+  register: reboot_needed

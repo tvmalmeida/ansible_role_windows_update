@@ -1,0 +1,18 @@
+---
+- name: Search for missing updates
+  ansible.windows.win_updates:
+    category_names: "{{ update_category_names }}"
+    state: searched
+  retries: 3
+  delay: 5
+  register: update_count
+
+- name: Check if there are updates to install
+  ansible.builtin.set_fact:
+    updates_to_install: "{{ update_count.updates | length > 0 }}"
+
+- name: List number of updates to install
+  ansible.builtin.debug:
+    msg:
+      - "Updates to install: {{ updates_to_install }}"
+      - "Number of updates to install: {{ update_count.updates | length }}"

@@ -1,0 +1,7 @@
+---
+- name: Install updates
+  ansible.windows.win_updates:
+    category_names: "{{ update_category_names }}"
+    state: installed
+  retries: 3
+  delay: 5

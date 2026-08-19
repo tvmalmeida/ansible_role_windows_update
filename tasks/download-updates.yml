@@ -1,0 +1,8 @@
+---
+- name: Download updates, only
+  when: updates_to_install
+  ansible.windows.win_updates:
+    category_names: "{{ update_category_names }}"
+    state: downloaded
+  retries: 3
+  delay: 5

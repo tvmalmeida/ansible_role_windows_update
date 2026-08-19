@@ -1,0 +1,91 @@
+---
+- name: Update windows system
+  hosts: "{{ node_group | default('all') }}"
+  serial: "{{ batch_size | default('33%') }}"
+  gather_facts: false
+  tags:
+    - windows_update
+
+  vars:
+    maintenance_name: "Windows Update"
+    maintenance_description: "Windows Update"
+    maintenance_duration: 30 # in minutes
+
+  tasks:
+    - name: Check if reboot is required before installing updates
+      ansible.builtin.import_role:
+        name: tvmalmeida.windows_update
+        tasks_from: is-reboot-required.yml
+
+    # if reboot is required put the host in maintenance mode
+    - name: Put host in maintenance mode
+      when: reboot_needed.result
+      ansible.builtin.include_role:
+        name: your-custom-role.zabbix_maintenance
+      vars:
+        zabbix_maintenance_name: "{{ maintenance_name }}"
+        zabbix_maintenance_description: "{{ maintenance_description }}"
+        zabbix_maintenance_duration: "{{ maintenance_duration }}"
+        zabbix_maintenance_state: present
+      tags:
+        - put_host_in_maintenance_mode
+
+    - name: Reboot host
+      ansible.windows.win_reboot:
+        reboot_timeout_sec: 1800
+      when: reboot_needed.result
+
+    - name: Search updates
+      ansible.builtin.import_role:
+        name: tvmalmeida.windows_update
+        tasks_from: search-updates.yml
+      tags:
+        - search_updates
+
+    - name: Download updates
+      ansible.builtin.import_role:
+        name: tvmalmeida.windows_update
+        tasks_from: download-updates.yml
+      tags:
+        - download_updates
+
+    # if there are updates to install, take a snapshot
+    - name: Take snapshot
+      when: updates_to_install
+      ansible.builtin.include_role:
+        name: your-custom-role.vsphere_snapshot
+      vars:
+        vsphere_snapshot_name: "{{ now(utc=true, fmt='%Y-%m-%d %H-%M-%S') }} - Before installing updates"
+        vsphere_snapshot_state: present
+      tags:
+        - install_updates
+        - take_snapshot
+
+    - name: Install updates
+      when: updates_to_install
+      ansible.builtin.import_role:
+        name: tvmalmeida.windows_update
+        tasks_from: install-updates.yml
+      tags:
+        - install_updates
+
+    - name: Check if reboot is required before installing updates
+      ansible.builtin.import_role:
+        name: tvmalmeida.windows_update
+        tasks_from: is-reboot-required.yml
+
+    # if reboot is required put the host in maintenance mode
+    - name: Put host in maintenance mode
+      when: reboot_needed.result
+      ansible.builtin.include_role:
+        name: your-custom-role.zabbix_maintenance
+      vars:
+        zabbix_maintenance_name: "{{ maintenance_name }}"
+        zabbix_maintenance_description: "{{ maintenance_description }}"
+        zabbix_maintenance_duration: "{{ maintenance_duration }}"
+        zabbix_maintenance_state: present
+
+    - name: Reboot host
+      ansible.windows.win_reboot:
+        reboot_timeout_sec: 1800
+      when: reboot_needed.result
