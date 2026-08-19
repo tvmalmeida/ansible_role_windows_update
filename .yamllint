@@ -1,9 +1,34 @@
 ---
+# Based on ansible-lint config
 extends: default
 
+ignore:
+  - credentials
+
 rules:
-  # 180 chars should be enough, but don't fail if a line is longer
+  braces:
+    max-spaces-inside: 1
+    level: error
+  brackets:
+    max-spaces-inside: 1
+    level: error
+  indentation:
+    spaces: 2
+    indent-sequences: true
+  key-ordering: disable
   line-length:
-    # same max number of ansiblelint
     max: 180
-    level: warning
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: false
+  new-lines:
+    type: unix
+  truthy:
+    check-keys: false
+  comments:
+    require-starting-space: true
+    ignore-shebangs: true
+    min-spaces-from-content: 1
+  comments-indentation: false
+  octal-values:
+    forbid-implicit-octal: true
+    forbid-explicit-octal: true
