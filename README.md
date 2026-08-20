@@ -76,6 +76,7 @@ For a workflow where only download is required
         tasks_from: is-reboot-required.yml
 
     - name: Call windows update role to reboot host
+      when: reboot_needed.result
       ansible.builtin.import_role:
         name: tvmalmeida.windows_update
         tasks_from: reboot-host.yml
