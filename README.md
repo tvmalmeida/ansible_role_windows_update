@@ -5,10 +5,10 @@ Ansible role for managing Windows updates in a controlled, task-based workflow.
 This role provides reusable tasks that can be imported into a playbook to:
 
 - check whether a reboot is pending
+- reboot host when required
 - search for missing updates
 - download updates
 - install updates
-- detect whether an update requires a reboot after installation
 
 ## Requirements
 
@@ -70,21 +70,29 @@ For a workflow where only download is required
   gather_facts: false
 
   tasks:
-    - name: Check if reboot is required before updates
+    - name: Call windows update role to check if reboot is required before installing updates
       ansible.builtin.import_role:
         name: tvmalmeida.windows_update
         tasks_from: is-reboot-required.yml
 
-    - name: Search for updates
+    - name: Call windows update role to reboot host
+      ansible.builtin.import_role:
+        name: tvmalmeida.windows_update
+        tasks_from: reboot-host.yml
+
+    - name: Call windows update role to search for updates
       ansible.builtin.import_role:
         name: tvmalmeida.windows_update
         tasks_from: search-updates.yml
+      tags:
+        - search_updates
 
-    - name: Download updates
+    - name: Call windows update role to download updates
       ansible.builtin.import_role:
         name: tvmalmeida.windows_update
         tasks_from: download-updates.yml
-
+      tags:
+        - download_updates
 ```
 
 A complete example is also available in [examples/ensure-windows-update.yml](examples/ensure-windows-update.yml).

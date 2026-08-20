@@ -1,0 +1,4 @@
+---
+- name: Reboot host
+  ansible.windows.win_reboot:
+    reboot_timeout_sec: "{{ windows_update_reboot_timeout }}"

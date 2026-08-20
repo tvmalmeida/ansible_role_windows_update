@@ -3,14 +3,30 @@
   ansible.builtin.include_tasks:
     file: is-reboot-required.yml
 
+- name: Reboot host if required before updates
+  when: reboot_needed.result
+  ansible.builtin.include_tasks:
+    file: reboot-host.yml
+
 - name: Search for updates
   ansible.builtin.include_tasks:
     file: search-updates.yml
 
 - name: Download updates
+  when: updates_to_install
   ansible.builtin.include_tasks:
     file: download-updates.yml
 
 - name: Install updates
+  when: updates_to_install
   ansible.builtin.include_tasks:
     file: install-updates.yml
+
+- name: Check if reboot is required after updates
+  ansible.builtin.include_tasks:
+    file: is-reboot-required.yml
+
+- name: Reboot host if required after updates
+  when: reboot_needed.result
+  ansible.builtin.include_tasks:
+    file: reboot-host.yml

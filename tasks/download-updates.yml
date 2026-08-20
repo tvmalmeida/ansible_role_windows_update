@@ -1,6 +1,5 @@
 ---
 - name: Download updates, only
-  when: updates_to_install
   ansible.windows.win_updates:
     category_names: "{{ windows_update_category_names }}"
     state: downloaded
