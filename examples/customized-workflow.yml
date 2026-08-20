@@ -12,13 +12,7 @@
         name: tvmalmeida.windows_update
         tasks_from: is-reboot-required.yml
 
-    # if reboot is required put the host in maintenance mode
-    - name: Call custom role to put host in maintenance mode
-      when: reboot_needed.result
-      ansible.builtin.include_role:
-        name: your-custom-role.zabbix_maintenance
-      tags:
-        - host_in_maintenance_mode
+    # if you have a custom role to put the host in maintenance mode, you can call it here
 
     - name: Call windows update role to reboot host
       when: reboot_needed.result
@@ -40,12 +34,7 @@
       tags:
         - download_updates
 
-    # if there are updates to install, take a snapshot
-    - name: Call custom role to take snapshot
-      when: updates_to_install
-      ansible.builtin.include_role:
-        name: your-custom-role.vsphere_snapshot
-
+    # if you have a custom role to take snapshot of the host before installing updates, you can call it here
 
     - name: Call windows update role to install updates
       when: updates_to_install
@@ -62,13 +51,7 @@
       tags:
         - install_updates
 
-    # if reboot is required put the host in maintenance mode
-    - name: Call custom role to put host in maintenance mode
-      when: reboot_needed.result
-      ansible.builtin.include_role:
-        name: your-custom-role.zabbix_maintenance
-      tags:
-        - host_in_maintenance_mode
+    # if you have a custom role to put the host in maintenance mode, you can call it here
 
     - name: Call windows update role to reboot host
       when: reboot_needed.result
