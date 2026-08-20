@@ -1,7 +1,7 @@
 ---
 - name: Search for missing updates
   ansible.windows.win_updates:
-    category_names: "{{ update_category_names }}"
+    category_names: "{{ windows_update_category_names }}"
     state: searched
   retries: 3
   delay: 5

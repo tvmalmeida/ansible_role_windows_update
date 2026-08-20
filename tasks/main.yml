@@ -1,0 +1,16 @@
+---
+- name: Check if reboot is required before updates
+  ansible.builtin.include_tasks:
+    file: is-reboot-required.yml
+
+- name: Search for updates
+  ansible.builtin.include_tasks:
+    file: search-updates.yml
+
+- name: Download updates
+  ansible.builtin.include_tasks:
+    file: download-updates.yml
+
+- name: Install updates
+  ansible.builtin.include_tasks:
+    file: install-updates.yml

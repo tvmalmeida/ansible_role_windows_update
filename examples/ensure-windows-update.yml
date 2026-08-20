@@ -1,0 +1,9 @@
+---
+- name: Update Windows systems
+  hosts: windows
+  gather_facts: false
+  tags:
+    - windows_update
+
+  roles:
+    - tvmalmeida.windows_update

@@ -22,7 +22,7 @@ This role provides reusable tasks that can be imported into a playbook to:
 The default update categories are:
 
 ```yaml
-update_category_names:
+windows_update_category_names:
   - CriticalUpdates
   - SecurityUpdates
   - UpdateRollups
@@ -31,7 +31,7 @@ update_category_names:
 You can override this variable to match the update categories required by your environment:
 
 ```yaml
-update_category_names:
+windows_update_category_names:
   - CriticalUpdates
   - SecurityUpdates
   - FeaturePacks
@@ -47,9 +47,21 @@ The role exposes task files that are intended to be imported with `import_role` 
 - `download-updates.yml`
 - `install-updates.yml`
 
-## Example Playbook
+## Examples Playbook
 
 This example shows the recommended pattern used in this repository:
+
+```yaml
+---
+- name: Update Windows systems
+  hosts: windows
+  gather_facts: false
+
+  roles:
+    - tvmalmeida.windows_update
+```
+
+For a workflow where only download is required
 
 ```yaml
 ---
@@ -73,10 +85,6 @@ This example shows the recommended pattern used in this repository:
         name: tvmalmeida.windows_update
         tasks_from: download-updates.yml
 
-    - name: Install updates
-      ansible.builtin.import_role:
-        name: tvmalmeida.windows_update
-        tasks_from: install-updates.yml
 ```
 
 A complete example is also available in [examples/ensure-windows-update.yml](examples/ensure-windows-update.yml).
