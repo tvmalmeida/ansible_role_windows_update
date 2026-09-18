@@ -11,3 +11,4 @@
           $Ansible.Result = $true
       }
   register: reboot_needed
+  changed_when: false
